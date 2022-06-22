@@ -12,26 +12,29 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import utils
 import glob
+import sys
+
 
 class FLNDataset(Dataset):
 
     def __init__(self, csv_file, phase, n_class=13, crop=False, flip_rate=0.):
 
-        self.train_data = glob.glob('./train_data/*.png')
-        #print(len(self.train_data))
+        #print('sys.path', sys.path)
+        self.train_data = glob.glob('./floor_data/train_data/*.png')
+        print("Length train_data in FLNDataset", len(self.train_data))
         self.n_class   = n_class
         self.flip_rate = flip_rate
         self.crop      = crop
         self.no_label = False
         self.val = False
         if phase == 'train': 
-            self.train_data = glob.glob('./train_data/*[0-9].png')
-            print(len(self.train_data))
+            self.train_data = glob.glob('./floor_data/train_data/*[0-9].png')
+            print("we are at line 32", len(self.train_data))
         if phase == 'val':
-            self.train_data = glob.glob('./val_data/*[0-9].png')
+            self.train_data = glob.glob('./floor_data/val_data/*[0-9].png')
             self.val = True
         if phase == 'real':
-            self.train_data = glob.glob('./real_data/*.jpg')
+            self.train_data = glob.glob('./floor_data/real_data/*.jpg')
             self.no_label = True
 
 
