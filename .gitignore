@@ -8,3 +8,4 @@ transforms/__pycache__/
 utils/__pycache__/
 models/
 pretrained/
+logs/

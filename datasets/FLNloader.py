@@ -28,10 +28,10 @@ class FLNDataset(Dataset):
         self.no_label = False
         self.val = False
         if phase == 'train': 
-            self.train_data = glob.glob('./floor_data/train_data/*[0-9].png')
+            self.train_data = glob.glob('./floor_data/train_data/*[0-9]*.png')
             print("we are at line 32", len(self.train_data))
         if phase == 'val':
-            self.train_data = glob.glob('./floor_data/val_data/*[0-9].png')
+            self.train_data = glob.glob('./floor_data/val_data/*[0-9]*.png')
             self.val = True
         if phase == 'real':
             self.train_data = glob.glob('./floor_data/real_data/*.jpg')
