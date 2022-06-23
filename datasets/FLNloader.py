@@ -21,7 +21,7 @@ class FLNDataset(Dataset):
 
         #print('sys.path', sys.path)
         self.train_data = glob.glob('./floor_data/train_data/*.png')
-        print("Length train_data in FLNDataset", len(self.train_data))
+        #print("Length train_data in FLNDataset", len(self.train_data))
         self.n_class   = n_class
         self.flip_rate = flip_rate
         self.crop      = crop
@@ -29,7 +29,7 @@ class FLNDataset(Dataset):
         self.val = False
         if phase == 'train': 
             self.train_data = glob.glob('./floor_data/train_data/*[0-9]*.png')
-            print("we are at line 32", len(self.train_data))
+            #print("we are at line 32", len(self.train_data))
         if phase == 'val':
             self.train_data = glob.glob('./floor_data/val_data/*[0-9]*.png')
             self.val = True
