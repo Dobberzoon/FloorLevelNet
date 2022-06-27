@@ -21,6 +21,9 @@ from network.mynn import freeze_weights, unfreeze_weights
 import numpy as np
 from scipy import ndimage
 
+import warnings 
+warnings.filterwarnings(action= 'ignore')
+
 
 # Argument Parser
 parser = argparse.ArgumentParser(description='Semantic Segmentation')
