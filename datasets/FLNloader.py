@@ -53,17 +53,23 @@ class FLNDataset(Dataset):
             img = torch.from_numpy(img.copy()).float()
             return {'X': img, 'IM': image, 'PA': self.train_data[idx]}
         label_dir = self.train_data[idx][:24]
-        print("label_dir:\n", label_dir)
+        #print("label_dir:\n", label_dir)
         correct_label_root = self.train_data[idx][24:]
-        print("correct_label_root:\n", correct_label_root)
+        #print("correct_label_root:\n", correct_label_root)
         correct_label_crop = correct_label_root.split('_', maxsplit=1)[0]
-        print("correct_label_crop:\n",correct_label_crop)
-        correct_base = label_dir + co
-        label_name = self.train_data[idx][:-4] + '_semantic_label.png'
-        label_line_name = self.train_data[idx][:-4] + '_multiple_level.png'
-        print("self.train_data[idx][:-4]:\n", self.train_data[idx][:-4])
-        print("label_name:\n", label_name)
-        print("label_line_name:\n", label_line_name)
+        #print("correct_label_crop:\n",correct_label_crop)
+        correct_base = label_dir + correct_label_crop
+        #print("correct_base:\n", correct_base)
+        #label_name = self.train_data[idx][:-4] + '_semantic_label.png'
+        #label_line_name = self.train_data[idx][:-4] + '_multiple_level.png'
+        #print("self.train_data[idx][:-4]:\n", self.train_data[idx][:-4])
+        #print("label_name:\n", label_name)
+        #print("label_line_name:\n", label_line_name)
+
+        # Following two lines is code adjusted to fix filename parsing
+        label_name = correct_base + '_semantic_label.png'
+        label_line_name = correct_base + '_multiple_level.png'
+
         label      = cv2.imread(label_name, cv2.IMREAD_GRAYSCALE) 
         label_line = cv2.imread(label_line_name, cv2.IMREAD_GRAYSCALE)
         img        = cv2.resize(img, dsize=(320, 320))

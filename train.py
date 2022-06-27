@@ -381,7 +381,7 @@ def train(train_loader, net, optim, curr_epoch, writer, scheduler, max_iter, opt
         main_loss = outputs[0]
         attention_map = outputs[1]
         attention_labels = get_attention_gt(aux_gts, attention_map.shape)
-        attention_labels = attention_labels.cuda()
+        attention_labels = attention_labels.long().cuda()
         attention_loss = criterion_attention(input=attention_map.transpose(1,2), target=attention_labels.transpose(1,2))
         #del inputs, gts, aux_gts
         total_loss = main_loss + (args.attention_loss * attention_loss)
