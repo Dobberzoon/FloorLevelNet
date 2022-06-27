@@ -926,5 +926,5 @@ class Generate_Attention_GT(object):   # 34818
 
 
 if __name__ == '__main__':
-    # main()
-    inference()
+    main()
+    # inference()

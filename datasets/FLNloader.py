@@ -52,9 +52,18 @@ class FLNDataset(Dataset):
             img = np.transpose(img, (2, 0, 1)) / 255.
             img = torch.from_numpy(img.copy()).float()
             return {'X': img, 'IM': image, 'PA': self.train_data[idx]}
+        label_dir = self.train_data[idx][:24]
+        print("label_dir:\n", label_dir)
+        correct_label_root = self.train_data[idx][24:]
+        print("correct_label_root:\n", correct_label_root)
+        correct_label_crop = correct_label_root.split('_', maxsplit=1)[0]
+        print("correct_label_crop:\n",correct_label_crop)
+        correct_base = label_dir + co
         label_name = self.train_data[idx][:-4] + '_semantic_label.png'
         label_line_name = self.train_data[idx][:-4] + '_multiple_level.png'
-        print(label_name)
+        print("self.train_data[idx][:-4]:\n", self.train_data[idx][:-4])
+        print("label_name:\n", label_name)
+        print("label_line_name:\n", label_line_name)
         label      = cv2.imread(label_name, cv2.IMREAD_GRAYSCALE) 
         label_line = cv2.imread(label_line_name, cv2.IMREAD_GRAYSCALE)
         img        = cv2.resize(img, dsize=(320, 320))
