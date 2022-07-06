@@ -25,6 +25,7 @@ import warnings
 warnings.filterwarnings(action= 'ignore')
 
 
+
 # Argument Parser
 parser = argparse.ArgumentParser(description='Semantic Segmentation')
 parser.add_argument('--lr', type=float, default=0.01)
@@ -284,8 +285,10 @@ def main():
     if args.aux_loss:
         criterion_aux = loss.get_loss_aux(args)
         net = network.get_net(args, criterion, criterion_aux)
+        print("if!")
     else:
         net = network.get_net(args, criterion)
+        print("else!")
 
     for i in range(5):
         if args.hanet[i] > 0:
@@ -346,6 +349,8 @@ def train(train_loader, net, optim, curr_epoch, writer, scheduler, max_iter, opt
 
     curr_iter = curr_epoch * len(train_loader)
 
+    print("train_loader.length: ", len(train_loader))
+
     for i, data in enumerate(train_loader):
 
         if curr_iter >= max_iter:
@@ -378,10 +383,14 @@ def train(train_loader, net, optim, curr_epoch, writer, scheduler, max_iter, opt
 
         outputs = net(inputs, gts=line_gts, gts_y=gts, aux_gts=None, attention_loss=requires_attention, attention_map=False)
 
+        print("outputs length: ", len(outputs))
         main_loss = outputs[0]
+        print("main_loss: ", main_loss)
         attention_map = outputs[1]
+        print("attention_map: ", attention_map)
         attention_labels = get_attention_gt(aux_gts, attention_map.shape)
-        attention_labels = attention_labels.long().cuda()
+
+        attention_labels = attention_labels.cuda()
         attention_loss = criterion_attention(input=attention_map.transpose(1,2), target=attention_labels.transpose(1,2))
         #del inputs, gts, aux_gts
         total_loss = main_loss + (args.attention_loss * attention_loss)
@@ -658,84 +667,84 @@ def post_process(im, line, planes):
                                 fontScale, vis_map[floor % 5], 2, cv2.LINE_AA)
 
                 ''' uncommit following lines for vp constrainted optimization '''
-                # if len(simple_line) < 2:
-                #     continue
-                # [x, y] = intersectionPoint(simple_line[-1], simple_line[0])
-                # ini_k.append(x)
-                # ini_k.append(y)
-                # print(ini_k)
-                # import scipy.optimize as opt
-                #
-                # # ‘Nelder - Mead’
-                # # ‘Powell’ (see here
-                # # ‘CG’
-                # # ‘BFGS’
-                # # ‘Newton - CG’
-                # # ‘L - BFGS - B’
-                # # ‘TNC’
-                # # ‘COBYLA’
-                # # ‘SLSQP’
-                # # ‘trust - constr
-                # # ‘dogleg’
-                # # ‘trust - ncg’
-                # # ‘trust - exact’
-                # # ‘trust - krylov’
-                # def demo_func(x):
-                #     # print(x)
-                #     xv = x[0]
-                #     # print(xv)
-                #     yv = x[1]
-                #     # print(yv)
-                #     energy = 0.
-                #     k = []
-                #     for level in range(len(level_point_list)):
-                #         # print(x[level])
-                #         rand_list = level_point_list[level][0]
-                #         x = [p[0] for p in rand_list]
-                #         y = [p[1] for p in rand_list]
-                #         weight = [1 for p in rand_list]
-                #         x.append(xv)
-                #         y.append(yv)
-                #         weight.append(10)
-                #         params = np.polyfit(x, y, deg=1, w=weight, full=True)
-                #         energy += params[1]
-                #
-                #     return energy
-                # result = opt.minimize(demo_func, x0=[x, y])
-                # # sa = SA(func=demo_func, x0=[240, 180], T_max=1, T_min=1e-9, L=300, max_stay_counter=300)
-                # print(result)
-                # best_x, best_y = result.x[0], result.x[1]
-                # print('best_x:', best_x, 'best_y', best_y)
-                #
-                # for level in range(len(level_point_list)):
-                #     vpx = best_x
-                #     vpy = best_y
-                #     rand_list = level_point_list[level][0]
-                #     floor = level_point_list[level][1]
-                #     x = [p[0] for p in rand_list]
-                #     y = [p[1] for p in rand_list]
-                #     weight = [1 for p in rand_list]
-                #     x.append(vpx)
-                #     y.append(vpy)
-                #     weight.append(10)
-                #     params = np.polyfit(x, y, deg=1, w=weight, full=True)
-                #     f = np.poly1d(params[0])
-                #     this_line = [[left_most, int(f(left_most))], [right_most, int(f(right_most))], floor]
-                #     if validate(this_line, l_lines_per_plane):
-                #         l_lines_per_plane.append(this_line)
-                #         cv2.line(im, pt1=(left_most, int(f(left_most))), pt2=(right_most, int(f(right_most))),
-                #                  thickness=5, color=vis_map[floor % 5])
-                #         check_mask = np.zeros(shape=(320, 320))
-                #         cv2.line(check_mask, pt1=(left_most, int(f(left_most))),
-                #                  pt2=(right_most, int(f(right_most))),
-                #                  thickness=1, color=1)
-                #         cv2.putText(im, str(floor),
-                #                     ((left_most + right_most) // 2, int(f((left_most + right_most) // 2))),
-                #                     font,
-                #                     fontScale, vis_map[floor % 5], 2, cv2.LINE_AA)
-                #         cv2.line(im, pt1=(left_most, int(f(left_most))),
-                #                  pt2=(right_most, int(f(right_most))),
-                #                  thickness=2, color=vis_map[floor % 5])
+                if len(simple_line) < 2:
+                    continue
+                [x, y] = intersectionPoint(simple_line[-1], simple_line[0])
+                ini_k.append(x)
+                ini_k.append(y)
+                print(ini_k)
+                import scipy.optimize as opt
+                
+                # ‘Nelder - Mead’
+                # ‘Powell’ (see here
+                # ‘CG’
+                # ‘BFGS’
+                # ‘Newton - CG’
+                # ‘L - BFGS - B’
+                # ‘TNC’
+                # ‘COBYLA’
+                # ‘SLSQP’
+                # ‘trust - constr
+                # ‘dogleg’
+                # ‘trust - ncg’
+                # ‘trust - exact’
+                # ‘trust - krylov’
+                def demo_func(x):
+                    # print(x)
+                    xv = x[0]
+                    # print(xv)
+                    yv = x[1]
+                    # print(yv)
+                    energy = 0.
+                    k = []
+                    for level in range(len(level_point_list)):
+                        # print(x[level])
+                        rand_list = level_point_list[level][0]
+                        x = [p[0] for p in rand_list]
+                        y = [p[1] for p in rand_list]
+                        weight = [1 for p in rand_list]
+                        x.append(xv)
+                        y.append(yv)
+                        weight.append(10)
+                        params = np.polyfit(x, y, deg=1, w=weight, full=True)
+                        energy += params[1]
+                
+                    return energy
+                result = opt.minimize(demo_func, x0=[x, y])
+                # sa = SA(func=demo_func, x0=[240, 180], T_max=1, T_min=1e-9, L=300, max_stay_counter=300)
+                print(result)
+                best_x, best_y = result.x[0], result.x[1]
+                print('best_x:', best_x, 'best_y', best_y)
+                
+                for level in range(len(level_point_list)):
+                    vpx = best_x
+                    vpy = best_y
+                    rand_list = level_point_list[level][0]
+                    floor = level_point_list[level][1]
+                    x = [p[0] for p in rand_list]
+                    y = [p[1] for p in rand_list]
+                    weight = [1 for p in rand_list]
+                    x.append(vpx)
+                    y.append(vpy)
+                    weight.append(10)
+                    params = np.polyfit(x, y, deg=1, w=weight, full=True)
+                    f = np.poly1d(params[0])
+                    this_line = [[left_most, int(f(left_most))], [right_most, int(f(right_most))], floor]
+                    if validate_lines(this_line, l_lines_per_plane):
+                        l_lines_per_plane.append(this_line)
+                        cv2.line(im, pt1=(left_most, int(f(left_most))), pt2=(right_most, int(f(right_most))),
+                                 thickness=5, color=vis_map[floor % 5])
+                        check_mask = np.zeros(shape=(320, 320))
+                        cv2.line(check_mask, pt1=(left_most, int(f(left_most))),
+                                 pt2=(right_most, int(f(right_most))),
+                                 thickness=1, color=1)
+                        cv2.putText(im, str(floor),
+                                    ((left_most + right_most) // 2, int(f((left_most + right_most) // 2))),
+                                    font,
+                                    fontScale, vis_map[floor % 5], 2, cv2.LINE_AA)
+                        cv2.line(im, pt1=(left_most, int(f(left_most))),
+                                 pt2=(right_most, int(f(right_most))),
+                                 thickness=2, color=vis_map[floor % 5])
     return im
 
 
@@ -926,5 +935,5 @@ class Generate_Attention_GT(object):   # 34818
 
 
 if __name__ == '__main__':
-    main()
-    # inference()
+    # main()
+    inference()
